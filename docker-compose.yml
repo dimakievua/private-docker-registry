@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 443:5000
+    volumes:
+      - ./:/etc/docker/registry/
+      - /registry/data:/var/lib/registry

@@ -1,0 +1,10 @@
+version: 0.1
+storage:
+  filesystem:
+http:
+  addr: 0.0.0.0:5000
+  host: https://registry.forma-dev.com
+  tls:
+    letsencrypt:
+      cachefile: /etc/docker/registry/letsencrypt.json
+      email: admin@forma-dev.com
