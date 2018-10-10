@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-set -x
-
-scp "docker-compose.yml" "root@206.189.108.246:/registry/docker-compose.yml"
-ssh "root@206.189.108.246" "docker stack deploy --compose-file /registry/docker-compose.yml formapro_registry"

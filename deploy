@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+scp "docker-compose.yml" "root@registry.forma-dev.com:/registry/docker-compose.yml"
+scp "traefik.toml" "root@registry.forma-dev.com:/registry/traefik.toml"
+ssh "root@registry.forma-dev.com" "docker stack deploy --compose-file /registry/docker-compose.yml formapro_registry"

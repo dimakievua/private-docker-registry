@@ -1,11 +1,50 @@
-version: '3'
+version: '3.1'
 
 services:
   registry:
     restart: always
     image: registry:2
-    ports:
-      - 443:5000
     volumes:
-      - ./:/etc/docker/registry/
-      - /registry/data:/var/lib/registry
+      - registry:/var/lib/registry
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:5000
+#      - REGISTRY_HTTP_HOST=https://registry.forma-dev.com
+    networks:
+      - traefik_net
+      - default
+    deploy:
+      mode: 'global'
+      placement:
+        constraints:
+          - 'node.hostname == docker-registry'
+      labels:
+        - "traefik.port=5000"
+        - "traefik.docker.network=formapro_registry_traefik_net"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.redirect.entryPoint=https"
+        - "traefik.frontend.rule=Host:registry.forma-dev.com"
+
+  traefik:
+    image: traefik
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    command: traefik --docker --docker.swarmMode --docker.domain=traefik --docker.watch --api --logLevel="DEBUG" --debug --acme.acmelogging
+    networks:
+      - traefik_net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /registry/traefik.toml:/etc/traefik/traefik.toml
+    deploy:
+      mode: 'global'
+      placement:
+        constraints:
+          - 'node.hostname == docker-registry'
+
+volumes:
+  registry: ~
+
+networks:
+  traefik_net:
+    driver: overlay
